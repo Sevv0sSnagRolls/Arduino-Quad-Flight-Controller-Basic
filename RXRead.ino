@@ -331,13 +331,13 @@ ISR(PCINT2_vect){                                                 // this functi
  *  RC OUTPUT FUNCTIONS
  */
 
- boolean RC_avail(){
+boolean RC_avail(){
     boolean avail = RC_data_rdy;
     RC_data_rdy = LOW;                          // reset the flag
     return avail;
-    }
+}
 
-  float RC_decode(int CH){
+float RC_decode(int CH){
   
   if(CH < 1 || CH > RC_inputs) return 0;     // if channel number is out of bounds return zero.
   
@@ -354,15 +354,15 @@ ISR(PCINT2_vect){                                                 // this functi
   int Max;
   if(CH <= size_RC_max) Max = RC_max[CH-1]; else Max = 2000;
 
-  float CH_output;
+  float CH_output = PW[i];
       
-  if(FAILSAFE(CH) == HIGH){                         // If the RC channel is outside of failsafe tolerances (10-330hz and 500-2500uS)
-      if(CH > size_RC_failsafe) CH_output = 0;      // and if no failsafe position has been defined, set output to neutral
-      else CH_output = RC_failsafe[i];              // or if defined set the failsafe position 
-  }
-  else{                                             // If the RC signal is valid
-    CH_output = calibrate(PW[i],Min,Mid,Max);       // calibrate the pulse width to the range -1 to 1.
-  }
+//  if(FAILSAFE(CH) == HIGH){                         // If the RC channel is outside of failsafe tolerances (10-330hz and 500-2500uS)
+//      if(CH > size_RC_failsafe) CH_output = 0;      // and if no failsafe position has been defined, set output to neutral
+//      else CH_output = RC_failsafe[i];              // or if defined set the failsafe position 
+//  }
+//  else{                                             // If the RC signal is valid
+//    CH_output = calibrate(PW[i],Min,Mid,Max);       // calibrate the pulse width to the range -1 to 1.
+//  }
   return CH_output;                                 
 
   // The signal is mapped from a pulsewidth into the range of -1 to +1, using the user defined calibrate() function in this code. 
@@ -442,6 +442,7 @@ void print_RCpwm(){                             // display the raw RC Channel PW
   }
   Serial.println("");
 }
+
 
 void print_decimal2percentage(float dec){
   int pc = dec*100;

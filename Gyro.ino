@@ -174,8 +174,7 @@ void readIMURawData(){
 }
 
 
-void IMUInitalErrorCalculation() 
-{
+void IMUInitalErrorCalculation(){
   /*
    * Aim of function is to capture the error inherent with the sensor
    * 
@@ -204,7 +203,7 @@ void IMUInitalErrorCalculation()
       Serial.print(i*10);
       Serial.print("%...");
     }
-   }
+  }
   Serial.println("Calibration Complete");
   //Average the data sampled
   rollRateInitalError /= 200;

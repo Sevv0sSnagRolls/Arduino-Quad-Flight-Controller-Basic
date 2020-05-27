@@ -12,8 +12,6 @@ float intergrator(float X, float Xd, float dt){
   return X + Xd*dt;
 }
 
-
-
 float alpha = 0.01;
 //Control Theory on the sizing of alpha
 //float alpha(float tau, float dt){
@@ -26,7 +24,7 @@ float complementaryFilter(float alpha, float currentAngleEstimation, float accel
 }
 
 
-void stateEstimation(){
+void stateEstimation() {
     //Get new IMU Data
     updateBodyFixedIMU();
     
@@ -37,26 +35,37 @@ void stateEstimation(){
     
     roll = complementaryFilter( alpha, intergrator(roll, rollRate, samplePeriodIMU), accel_y);
     pitch = complementaryFilter( alpha, intergrator(pitch, pitchRate, samplePeriodIMU), accel_y); 
-    
-    Serial.print(elapsedTimeIMUReadings);
-    Serial.print(" : ");
-    Serial.print(timeIMUupdate );
-    Serial.print(" : ");
-    Serial.print(timePrevIMUupdate);
-    Serial.print(" : ");
-    Serial.print(samplePeriodIMU);
-    Serial.print(" : ");
-    Serial.print(ACCEL_XOUT_RAW);
-    Serial.print(" Roll: ");
-    Serial.print(roll);
-    Serial.print("   |   ");
-    Serial.print("Pitch: ");
-    Serial.print(pitch);
-    Serial.print("| X: ");
-    Serial.print(accel_x);
-    Serial.print("   |   ");
-    Serial.print("Y: ");
-    Serial.println(accel_y);
+
+    state[0] = roll;
+    state[1] = pitch;
+    state[2] = rollRate;
+    state[3] = pitchRate;
+//    Serial.print("State");
+//    Serial.print(state[0]);
+//    Serial.print(" | ");
+//    Serial.print(state[1]);
+//    Serial.print(" | ");
+//    Serial.print(state[2]);
+//    Serial.print(" | ");
+//    Serial.println(state[3]);
+//    
+//    Serial.print(elapsedTimeIMUReadings);
+//    Serial.print(" : ");
+//    Serial.print(timeIMUupdate );
+//    Serial.print(" : ");
+//    Serial.print(timePrevIMUupdate);
+//    Serial.print(" : ");
+//    Serial.print(samplePeriodIMU);
+//    Serial.print(" Roll: ");
+//    Serial.print(roll);
+//    Serial.print("   |   ");
+//    Serial.print("Pitch: ");
+//    Serial.print(pitch);
+//    Serial.print("| X: ");
+//    Serial.print(accel_x);
+//    Serial.print("   |   ");
+//    Serial.print("Y: ");
+//    Serial.println(accel_y);
 
     timePrevIMUupdate = timeIMUupdate;
 }
