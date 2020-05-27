@@ -10,21 +10,10 @@ int16_t GYRO_XOUT_RAW, GYRO_YOUT_RAW, GYRO_ZOUT_RAW;
 int16_t TEMP_RAW;
 //--------------------------------------------------------------------------
 
-//These are the eaxt times used for the intergration
-unsigned long timeIMUupdate, timePrevIMUupdate;
-float samplePeriodIMU;
 
 float LSB_GYRO; 
 float LSB_ACCEL;
 
-float accel_x, accel_y, accel_z;
-                        
-float roll, pitch, yaw;        
-float rollRateInitalError, pitchRateInitalError;               
-float rollRate , pitchRate;
-//--------------------------------------------------------------------------
-
-//PROGRAM
 //--------------------------------------------------------------------------
 void setupIMU() {
   
@@ -37,6 +26,9 @@ void setupIMU() {
   Wire.write(0x6B);                       //make the reset (place a 0 into the 6B register)
   Wire.write(0x00);
   Wire.endTransmission(true);             //end the transmission
+
+  //MPU 6050 Datasheet states power on sequence ramps up to VDD in 100ms
+  delay(100);
   
   /** Get digital low-pass filter configuration.
  * The DLPF_CFG parameter sets the digital low pass filter configuration. It
@@ -108,46 +100,12 @@ void setupIMU() {
 }
 
 void updateBodyFixedIMU(){
-      readIMURawData();
-      
+      readIMURawData();  
       rollRate = (GYRO_XOUT_RAW/LSB_GYRO) - rollRateInitalError; 
       pitchRate = (GYRO_YOUT_RAW/LSB_GYRO) - pitchRateInitalError;
       accel_x = ACCEL_XOUT_RAW/LSB_ACCEL;
       accel_y = ACCEL_YOUT_RAW/LSB_ACCEL;
       accel_z = ACCEL_ZOUT_RAW/LSB_ACCEL;
-      
-      /*
-       * First Order Intergration Approximation to new angles
-       */
-      //time in seconds from the exact time intergration is performed (NOW) since last IMU update
-      timeIMUupdate = micros();
-      samplePeriodIMU = timeIMUupdate - timePrevIMUupdate;
-      samplePeriodIMU /= 1000000;
-      roll = roll + rollRate*samplePeriodIMU;
-      pitch = pitch  + pitchRate*samplePeriodIMU; 
-
-
-      Serial.print(elapsedTimeIMUReadings);
-      Serial.print(" : ");
-      Serial.print(timeIMUupdate );
-      Serial.print(" : ");
-      Serial.print(timePrevIMUupdate);
-      Serial.print(" : ");
-      Serial.print(samplePeriodIMU);
-      Serial.print(" : ");
-      Serial.print(ACCEL_XOUT_RAW);
-      Serial.print(" Roll: ");
-      Serial.print(roll);
-      Serial.print("   |   ");
-      Serial.print("Pitch: ");
-      Serial.print(pitch);
-      Serial.print("| X: ");
-      Serial.print(accel_x);
-      Serial.print("   |   ");
-      Serial.print("Y: ");
-      Serial.println(accel_y);
-
-      timePrevIMUupdate = timeIMUupdate;
 }
 
 void readIMURawData(){

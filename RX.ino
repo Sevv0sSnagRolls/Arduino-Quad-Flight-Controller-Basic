@@ -1,6 +1,4 @@
 #include "pinMap.h"
-
-
 /*
  * Initialise by setting up interrupts for control inputs
  * Digital Pins are set to interupt on RISING because:
@@ -10,10 +8,10 @@
  * 
  * _________              ______________
 */
-//void RXinit(){
-//  attachInterrupt( digitalPinToInterrupt(throttle), ISRthrottle, RISING );
-//}
-//
-//ISRthrottle{
-//  throttleFlag = 1;
-//}
+
+void readRX(){
+  for (int i = 0; i<channels; i++){       // run through each RC channel
+    int CH = i+1;
+    RC_in[i] = RC_decode(CH);             // decode receiver channel and apply failsafe
+  throttle = RC_in[0];
+}
